@@ -3,6 +3,7 @@ package com.shelton.expense_tracker_backend.service;
 import com.shelton.expense_tracker_backend.dto.auth.AuthResponse;
 import com.shelton.expense_tracker_backend.dto.auth.LoginRequest;
 import com.shelton.expense_tracker_backend.dto.auth.RegisterRequest;
+import com.shelton.expense_tracker_backend.entity.Currency;
 import com.shelton.expense_tracker_backend.entity.User;
 import com.shelton.expense_tracker_backend.repository.UserRepository;
 import com.shelton.expense_tracker_backend.security.JwtUtil;
@@ -36,7 +37,9 @@ public class AuthService {
                 .name(request.getName())
                 .email(request.getEmail())
                 .password(encoder.encode(request.getPassword()))
-                .preferredCurrency(request.getPreferredCurrency())
+                .preferredCurrency(
+                        request.getPreferredCurrency()
+                )
                 .build();
 
         userRepository.save(user);

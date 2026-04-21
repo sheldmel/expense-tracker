@@ -21,12 +21,30 @@ public class AuthenticationController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<AuthResponse> register(@RequestBody RegisterRequest request) {
-        return ResponseEntity.ok(authService.register(request));
+    public ResponseEntity<?> register(@RequestBody RegisterRequest request) {
+
+        try {
+            AuthResponse response = authService.register(request);
+            return ResponseEntity.status(201).body(response);
+
+        } catch (RuntimeException e) {
+            if (e.getMessage().contains("Email")) {
+                return ResponseEntity.status(409).body(e.getMessage());
+            }
+            return ResponseEntity.status(400).body(e.getMessage());
+        }
     }
 
     @PostMapping("/signin")
-    public ResponseEntity<AuthResponse> signin(@RequestBody LoginRequest request) {
-        return ResponseEntity.ok(authService.signin(request));
+    public ResponseEntity<?> signin(@RequestBody LoginRequest request) {
+        try {
+            AuthResponse response = authService.signin(request);
+            return ResponseEntity.ok(response);
+
+        } catch (RuntimeException e) {
+            return ResponseEntity
+                    .status(400)
+                    .body(e.getMessage());
+        }
     }
 }
