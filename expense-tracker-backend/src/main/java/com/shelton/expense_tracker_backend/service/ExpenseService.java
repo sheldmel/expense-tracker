@@ -28,20 +28,19 @@ public class ExpenseService {
         this.categoryRepository = categoryRepository;
         this.userRepository = userRepository;
     }
-    // Helper to get the logged in user's Id
-    private Long getCurrentUserId() {
+    // Helper to get the logged in
+    private User getCurrentUser() {
         String email = SecurityContextHolder.getContext()
                 .getAuthentication()
                 .getName();
 
         return userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"))
-                .getId();
+                .orElseThrow(() -> new RuntimeException("User not found"));
     }
 
     // Create a new Expense
     public ExpenseResponse createExpense(ExpenseRequest request) {
-        Long userId = getCurrentUserId();
+        Long userId = getCurrentUser().getId();
         Category category = categoryRepository.findById(request.getCategoryId())
                 .orElseThrow(() -> new RuntimeException("Category not found"));
         Expense expense = Expense.builder()
@@ -62,12 +61,9 @@ public class ExpenseService {
             LocalDate startDate,
             LocalDate endDate
     ){
-        Long userId = getCurrentUserId();
-        return expenseRepository.findByUserId(userId)
+        Long userId = getCurrentUser().getId();
+        return expenseRepository.findExpenses(userId, categoryId, startDate, endDate)
                 .stream()
-                .filter(e -> categoryId == null || e.getCategory().getId().equals(categoryId))
-                .filter(e -> startDate == null || !e.getDate().isBefore(startDate))
-                .filter(e -> endDate == null || !e.getDate().isAfter(endDate))
                 .map(this::convertToDto)
                 .toList();
 
@@ -80,7 +76,7 @@ public class ExpenseService {
                 .orElseThrow(() -> new RuntimeException("Expense not found"));
 
         // only allow expense to be updated if it belongs to the user
-        if (!expense.getUser().getId().equals(getCurrentUserId())) {
+        if (!expense.getUser().getId().equals(getCurrentUser().getId())) {
             throw new RuntimeException("Unauthorized");
         }
 
@@ -104,7 +100,7 @@ public class ExpenseService {
                 .orElseThrow(() -> new RuntimeException("Expense not found"));
 
         // only allow expense to be deleted if it belongs to the user
-        if (!expense.getUser().getId().equals(getCurrentUserId())) {
+        if (!expense.getUser().getId().equals(getCurrentUser().getId())) {
             throw new RuntimeException("Unauthorized");
         }
 
@@ -119,6 +115,7 @@ public class ExpenseService {
                 .amount(expense.getAmount())
                 .description(expense.getDescription())
                 .date(expense.getDate())
+                .userCurrency(getCurrentUser().getPreferredCurrency())
                 .categoryId(expense.getCategory().getId())
                 .categoryName(expense.getCategory().getName())
                 .categoryIcon(expense.getCategory().getIcon())
