@@ -11,13 +11,18 @@ import java.util.Optional;
 
 @Repository
 public interface BudgetRepository extends JpaRepository<Budget, Long> {
+    // Get all budgets for a user
     List<Budget> findByUserId(Long userId);
+
+    // Get budgets for a specific month and year (used in dashboard)
+    List<Budget> findByUserIdAndMonthAndYear(Long userId, Integer month, Integer year);
 
     // For duplicate check
     Optional<Budget> findByUserIdAndCategoryIdAndMonthAndYear(
             Long userId, Long categoryId, Integer month, Integer year
     );
 
+    // Flexible query with optional filters (used in GET /budgets endpoint)
     @Query("""
         SELECT b FROM Budget b
         WHERE b.user.id = :userId
