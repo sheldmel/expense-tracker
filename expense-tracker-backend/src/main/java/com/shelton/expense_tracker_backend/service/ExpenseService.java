@@ -10,6 +10,10 @@ import com.shelton.expense_tracker_backend.entity.User;
 import com.shelton.expense_tracker_backend.repository.CategoryRepository;
 import com.shelton.expense_tracker_backend.repository.ExpenseRepository;
 import com.shelton.expense_tracker_backend.repository.UserRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -56,17 +60,28 @@ public class ExpenseService {
     }
 
     // Get expenses within a range, by category or all
-    public List<ExpenseResponse> getExpenses(
+    public Page<ExpenseResponse> getExpenses(
             Long categoryId,
             LocalDate startDate,
-            LocalDate endDate
-    ){
+            LocalDate endDate,
+            String sortBy,
+            String sortDir,
+            int page,
+            int size
+    ) {
         Long userId = getCurrentUser().getId();
-        return expenseRepository.findExpenses(userId, categoryId, startDate, endDate)
-                .stream()
-                .map(this::convertToDto)
-                .toList();
 
+        Sort sort = sortDir.equalsIgnoreCase("asc")
+                ? Sort.by(sortBy).ascending()
+                : Sort.by(sortBy).descending();
+
+        Pageable pageable = PageRequest.of(page, size, sort);
+
+        Page<Expense> expenses = expenseRepository.findExpenses(
+                userId, categoryId, startDate, endDate, pageable
+        );
+
+        return expenses.map(this::convertToDto);
     }
 
     // update an existing expense

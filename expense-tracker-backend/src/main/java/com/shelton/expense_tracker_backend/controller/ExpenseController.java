@@ -5,6 +5,8 @@ import com.shelton.expense_tracker_backend.dto.category.CategoryResponse;
 import com.shelton.expense_tracker_backend.dto.expense.ExpenseRequest;
 import com.shelton.expense_tracker_backend.dto.expense.ExpenseResponse;
 import com.shelton.expense_tracker_backend.service.ExpenseService;
+import org.springframework.data.domain.Page;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -29,12 +31,18 @@ public class ExpenseController {
 
     // Get expenses
     @GetMapping
-    public List<ExpenseResponse> getExpenses(
+    public ResponseEntity<Page<ExpenseResponse>> getExpenses(
             @RequestParam(required = false) Long categoryId,
             @RequestParam(required = false) LocalDate startDate,
-            @RequestParam(required = false) LocalDate endDate
+            @RequestParam(required = false) LocalDate endDate,
+            @RequestParam(defaultValue = "date") String sortBy,
+            @RequestParam(defaultValue = "desc") String sortDir,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
     ) {
-        return expenseService.getExpenses(categoryId, startDate, endDate);
+        return ResponseEntity.ok(expenseService.getExpenses(
+                categoryId, startDate, endDate, sortBy, sortDir, page, size
+        ));
     }
 
     // Update an existing expense

@@ -1,6 +1,8 @@
 package com.shelton.expense_tracker_backend.repository;
 
 import com.shelton.expense_tracker_backend.entity.Expense;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -20,13 +22,13 @@ public interface ExpenseRepository extends JpaRepository<Expense, Long> {
                     AND (:categoryId IS NULL OR e.category.id = :categoryId)
                     AND (CAST(:startDate AS date) IS NULL OR e.date >= :startDate)
                     AND (CAST(:endDate AS date) IS NULL OR e.date <= :endDate)
-                    ORDER BY e.date DESC
     """)
-    List<Expense> findExpenses(
+    Page<Expense> findExpenses(
             @Param("userId") Long userId,
             @Param("categoryId") Long categoryId,
             @Param("startDate") LocalDate startDate,
-            @Param("endDate") LocalDate endDate
+            @Param("endDate") LocalDate endDate,
+            Pageable pageable
     );
 
     @Query("SELECT COALESCE(SUM(e.amount), 0) FROM Expense e WHERE e.user.id = :userId AND MONTH(e.date) = :month AND YEAR(e.date) = :year")
