@@ -3,11 +3,13 @@ package com.shelton.expense_tracker_backend.controller;
 import com.shelton.expense_tracker_backend.dto.budget.BudgetRequest;
 import com.shelton.expense_tracker_backend.dto.budget.BudgetResponse;
 import com.shelton.expense_tracker_backend.service.BudgetService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@SecurityRequirement(name = "bearerAuth")
 @RestController
 @RequestMapping("/api/budgets")
 public class BudgetController {

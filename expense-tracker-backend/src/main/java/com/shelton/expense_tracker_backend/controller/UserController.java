@@ -5,9 +5,12 @@ import com.shelton.expense_tracker_backend.dto.user.ChangePasswordRequest;
 import com.shelton.expense_tracker_backend.dto.user.UpdateProfileRequest;
 import com.shelton.expense_tracker_backend.dto.user.UserResponse;
 import com.shelton.expense_tracker_backend.service.UserService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+
+@SecurityRequirement(name = "bearerAuth")
 @RestController
 @RequestMapping("/api/users")
 public class UserController {

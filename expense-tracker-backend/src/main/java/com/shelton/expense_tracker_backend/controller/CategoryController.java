@@ -3,11 +3,13 @@ package com.shelton.expense_tracker_backend.controller;
 import com.shelton.expense_tracker_backend.dto.category.CategoryRequest;
 import com.shelton.expense_tracker_backend.dto.category.CategoryResponse;
 import com.shelton.expense_tracker_backend.service.CategoryService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@SecurityRequirement(name = "bearerAuth")
 @RestController
 @RequestMapping("/api/categories")
 public class CategoryController {

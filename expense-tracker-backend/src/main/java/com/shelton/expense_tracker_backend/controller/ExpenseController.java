@@ -5,6 +5,7 @@ import com.shelton.expense_tracker_backend.dto.category.CategoryResponse;
 import com.shelton.expense_tracker_backend.dto.expense.ExpenseRequest;
 import com.shelton.expense_tracker_backend.dto.expense.ExpenseResponse;
 import com.shelton.expense_tracker_backend.service.ExpenseService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,6 +13,8 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDate;
 import java.util.List;
 
+
+@SecurityRequirement(name = "bearerAuth")
 @RestController
 @RequestMapping("/api/expenses")
 
