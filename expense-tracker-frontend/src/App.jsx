@@ -13,12 +13,17 @@ const ProtectedRoute = ({ children }) => {
     return token ? children : <Navigate to="/login" />;
 };
 
+const PublicRoute = ({ children }) => {
+    const { token } = useAuth();
+    return token ? <Navigate to="/dashboard" /> : children;
+};
+
 const router = createBrowserRouter(
     createRoutesFromElements(
         <Route>
             {/* Public routes */}
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
+            <Route path="/login" element={<PublicRoute><Login /></PublicRoute>} />
+            <Route path="/register" element={<PublicRoute><Register /></PublicRoute>} />
 
             {/* Protected routes with shared layout (navbar) */}
             <Route path="/" element={<ProtectedRoute><Layout /></ProtectedRoute>}>
