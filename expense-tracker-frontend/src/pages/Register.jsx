@@ -39,7 +39,6 @@ export default function Register() {
             navigate('/dashboard');
         } catch (err) {
             setError(err.response?.data || err.response?.data?.message || 'Registration failed');
-
         } finally {
             setLoading(false);
         }
