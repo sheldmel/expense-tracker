@@ -14,7 +14,12 @@ import java.math.BigDecimal;
 public class BudgetResponse {
     private Long id;
     private String categoryName;
+    private String categoryColor;
+    private String categoryIcon;
     private BigDecimal limitAmount;
+    private BigDecimal spentAmount;
+    private Double percentageUsed;
+    private BigDecimal remaining;
     private Integer month;
     private Integer year;
 }

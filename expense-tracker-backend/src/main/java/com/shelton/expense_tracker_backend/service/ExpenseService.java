@@ -134,6 +134,7 @@ public class ExpenseService {
                 .categoryId(expense.getCategory().getId())
                 .categoryName(expense.getCategory().getName())
                 .categoryIcon(expense.getCategory().getIcon())
+                .categoryColor(expense.getCategory().getColor())
                 .build();
     }
 }

@@ -7,20 +7,28 @@ import com.shelton.expense_tracker_backend.entity.Category;
 import com.shelton.expense_tracker_backend.entity.User;
 import com.shelton.expense_tracker_backend.repository.BudgetRepository;
 import com.shelton.expense_tracker_backend.repository.CategoryRepository;
+import com.shelton.expense_tracker_backend.repository.ExpenseRepository;
 import com.shelton.expense_tracker_backend.repository.UserRepository;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class BudgetService {
 
+    private final ExpenseRepository expenseRepository;
     private final BudgetRepository budgetRepository;
     private final CategoryRepository categoryRepository;
     private final UserRepository userRepository;
 
-    public BudgetService(BudgetRepository budgetRepository, CategoryRepository categoryRepository, UserRepository userRepository) {
+    public BudgetService(ExpenseRepository expenseRepository, BudgetRepository budgetRepository, CategoryRepository categoryRepository, UserRepository userRepository) {
+        this.expenseRepository = expenseRepository;
         this.budgetRepository = budgetRepository;
         this.categoryRepository = categoryRepository;
         this.userRepository = userRepository;
@@ -35,10 +43,41 @@ public class BudgetService {
 
     public List<BudgetResponse> getBudgets(Long categoryId, Integer month, Integer year) {
         Long userId = getCurrentUser().getId();
-        return budgetRepository.findBudgets(userId, categoryId, month, year)
-                .stream()
-                .map(this::convertToDto)
-                .toList();
+        List<Budget> budgets = budgetRepository.findBudgets(userId, categoryId, month, year);
+
+        // get spending by category for this month/year if month and year provided
+        Map<String, BigDecimal> spendingMap = new HashMap<>();
+        if (month != null && year != null) {
+            List<Object[]> spending = expenseRepository.getSpendingByCategoryForMonth(userId, month, year);
+            for (Object[] row : spending) {
+                spendingMap.put((String) row[0], (BigDecimal) row[3]);
+            }
+        }
+
+        List<BudgetResponse> result = new ArrayList<>();
+        for (Budget budget : budgets) {
+            String categoryName = budget.getCategory().getName();
+            BigDecimal spent = spendingMap.getOrDefault(categoryName, BigDecimal.ZERO);
+            BigDecimal limit = budget.getLimitAmount();
+            BigDecimal remaining = limit.subtract(spent);
+            double percentage = spent.divide(limit, 4, RoundingMode.HALF_UP)
+                    .multiply(BigDecimal.valueOf(100))
+                    .doubleValue();
+
+            result.add(BudgetResponse.builder()
+                    .id(budget.getId())
+                    .categoryName(categoryName)
+                    .categoryColor(budget.getCategory().getColor())
+                    .categoryIcon(budget.getCategory().getIcon())
+                    .limitAmount(limit)
+                    .spentAmount(spent)
+                    .remaining(remaining)
+                    .percentageUsed(percentage)
+                    .month(budget.getMonth())
+                    .year(budget.getYear())
+                    .build());
+        }
+        return result;
     }
 
     public BudgetResponse createBudget(BudgetRequest request) {
@@ -90,7 +129,12 @@ public class BudgetService {
         return BudgetResponse.builder()
                 .id(budget.getId())
                 .categoryName(budget.getCategory().getName())
+                .categoryColor(budget.getCategory().getColor())
+                .categoryIcon(budget.getCategory().getIcon())
                 .limitAmount(budget.getLimitAmount())
+                .spentAmount(BigDecimal.ZERO)   // no spending context on create/update
+                .remaining(budget.getLimitAmount())
+                .percentageUsed(0.0)
                 .month(budget.getMonth())
                 .year(budget.getYear())
                 .build();

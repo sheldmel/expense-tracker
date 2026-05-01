@@ -19,4 +19,6 @@ public class ExpenseResponse {
     private Long categoryId;
     private String categoryName;
     private String categoryIcon;
+    private String categoryColor;
+
 }

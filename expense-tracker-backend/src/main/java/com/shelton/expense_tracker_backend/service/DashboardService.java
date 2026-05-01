@@ -1,6 +1,8 @@
 package com.shelton.expense_tracker_backend.service;
 
+import com.shelton.expense_tracker_backend.dto.budget.BudgetResponse;
 import com.shelton.expense_tracker_backend.dto.dashboard.*;
+import com.shelton.expense_tracker_backend.dto.expense.ExpenseResponse;
 import com.shelton.expense_tracker_backend.entity.Budget;
 import com.shelton.expense_tracker_backend.entity.Expense;
 import com.shelton.expense_tracker_backend.entity.User;
@@ -23,15 +25,14 @@ import java.util.stream.IntStream;
 public class DashboardService {
 
     private final ExpenseRepository expenseRepository;
-    private final BudgetRepository budgetRepository;
     private final UserRepository userRepository;
+    private final BudgetService budgetService;
 
     public DashboardService(ExpenseRepository expenseRepository,
-                            BudgetRepository budgetRepository,
-                            UserRepository userRepository) {
+                            UserRepository userRepository, BudgetService budgetService) {
         this.expenseRepository = expenseRepository;
-        this.budgetRepository = budgetRepository;
         this.userRepository = userRepository;
+        this.budgetService = budgetService;
     }
 
     private User getCurrentUser() {
@@ -67,12 +68,12 @@ public class DashboardService {
         // sort by highest spending first
         spendingByCategory.sort((a, b) -> b.getTotal().compareTo(a.getTotal()));
 
-        List<BudgetSummary> budgetSummary = new ArrayList<>(buildBudgetSummary(userId, month, year, spendingByCategory));
+        List<BudgetResponse> budgetSummary = budgetService.getBudgets(null, month, year);;
 
         // sort by most critical budget first
         budgetSummary.sort((a, b) -> Double.compare(b.getPercentageUsed(), a.getPercentageUsed()));
 
-        List<RecentExpense> recentExpenses = mapRecentExpenses(
+        List<ExpenseResponse> recentExpenses = mapRecentExpenses(
                 expenseRepository.getRecentExpenses(userId)
         );
 
@@ -95,7 +96,7 @@ public class DashboardService {
                 expenseRepository.getSpendingByCategoryForYear(userId, year)
         );
         List<MonthlyBreakdown> monthlyBreakdown = buildMonthlyBreakdown(userId, year);
-        List<RecentExpense> recentExpenses = mapRecentExpenses(
+        List<ExpenseResponse> recentExpenses = mapRecentExpenses(
                 expenseRepository.getRecentExpenses(userId)
         );
 
@@ -121,41 +122,6 @@ public class DashboardService {
         ).toList();
     }
 
-    private List<BudgetSummary> buildBudgetSummary(Long userId, int month, int year,
-                                                      List<CategorySpending> spending) {
-        List<Budget> budgets = budgetRepository.findByUserIdAndMonthAndYear(userId, month, year);
-
-        // map spending by category name
-        Map<String, BigDecimal> spendingMap = new HashMap<>();
-        for (CategorySpending cs : spending) {
-            spendingMap.put(cs.getCategoryName(), cs.getTotal());
-        }
-
-        List<BudgetSummary> result = new ArrayList<>();
-        for (Budget budget : budgets) {
-            String categoryName = budget.getCategory().getName();
-            BigDecimal spent = spendingMap.getOrDefault(categoryName, BigDecimal.ZERO);
-            BigDecimal limit = budget.getLimitAmount();
-            BigDecimal remaining = limit.subtract(spent);
-
-            // convert spent amount to a percentage
-            double percentage = spent.divide(limit, 4, RoundingMode.HALF_UP)
-                    .multiply(BigDecimal.valueOf(100))
-                    .doubleValue();
-
-            result.add(BudgetSummary.builder()
-                    .categoryName(categoryName)
-                    .categoryColor(budget.getCategory().getColor())
-                    .categoryIcon(budget.getCategory().getIcon())
-                    .limitAmount(limit)
-                    .spentAmount(spent)
-                    .remaining(remaining)
-                    .percentageUsed(percentage)
-                    .build());
-        }
-        return result;
-    }
-
     private List<MonthlyBreakdown> buildMonthlyBreakdown(Long userId, int year) {
         List<Object[]> rows = expenseRepository.getMonthlyBreakdown(userId, year);
 
@@ -178,13 +144,15 @@ public class DashboardService {
         return result;
     }
 
-    private List<RecentExpense> mapRecentExpenses(List<Expense> expenses) {
-        return expenses.stream().map(e -> RecentExpense.builder()
-                .description(e.getDescription())
+    private List<ExpenseResponse> mapRecentExpenses(List<Expense> expenses) {
+        return expenses.stream().map(e -> ExpenseResponse.builder()
+                .id(e.getId())
                 .amount(e.getAmount())
-                .categoryName(e.getCategory().getName())
-                .categoryColor(e.getCategory().getColor())
+                .description(e.getDescription())
                 .date(e.getDate())
+                .categoryName(e.getCategory().getName())
+                .categoryIcon(e.getCategory().getIcon())
+                .categoryColor(e.getCategory().getColor())
                 .build()
         ).toList();
     }

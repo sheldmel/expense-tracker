@@ -1,6 +1,8 @@
 package com.shelton.expense_tracker_backend.dto.dashboard;
 
 
+import com.shelton.expense_tracker_backend.dto.budget.BudgetResponse;
+import com.shelton.expense_tracker_backend.dto.expense.ExpenseResponse;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -19,7 +21,7 @@ public class DashboardResponse {
     private BigDecimal totalSpent;
     private Long totalExpenses;
     private List<CategorySpending> spendingByCategory;
-    private List<BudgetSummary> budgetSummary;        // null for yearly
-    private List<MonthlyBreakdown> monthlyBreakdown;  // null for monthly
-    private List<RecentExpense> recentExpenses;
+    private List<BudgetResponse> budgetSummary;
+    private List<MonthlyBreakdown> monthlyBreakdown;
+    private List<ExpenseResponse> recentExpenses;
 }
