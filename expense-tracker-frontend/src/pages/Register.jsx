@@ -9,6 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import PasswordInput from '@/components/PasswordInput';
 import FormField from '@/components/FormField';
 import { validatePassword } from '../utils/validatePassword';
+import { CURRENCY_OPTIONS } from '../utils/constants';
 
 export default function Register() {
     const [name, setName] = useState('');
@@ -96,9 +97,11 @@ export default function Register() {
                                     <SelectValue placeholder="Select currency" />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    <SelectItem value="USD">USD — US Dollar</SelectItem>
-                                    <SelectItem value="INR">INR — Indian Rupee</SelectItem>
-                                    <SelectItem value="GBP">GBP — British Pound</SelectItem>
+                                    {CURRENCY_OPTIONS.map((option) => (
+                                        <SelectItem key={option.value} value={option.value}>
+                                            {option.label}
+                                        </SelectItem>
+                                    ))}
                                 </SelectContent>
                             </Select>
                         </FormField>

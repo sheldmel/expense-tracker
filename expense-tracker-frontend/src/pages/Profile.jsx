@@ -1,11 +1,10 @@
 import { useState } from 'react';
-import { updateProfile } from '../services/user';
-import { updatePassword } from '../services/user';
+import { updateProfile, updatePassword } from '../services/user';
 import PasswordInput from '@/components/PasswordInput';
 import FormField from '@/components/FormField';
 import { validatePassword } from '../utils/validatePassword';
 import { useAuth } from '../context/AuthContext';
-
+import { Separator } from '@/components/ui/separator';
 import {
     Card,
     CardContent,
@@ -13,12 +12,12 @@ import {
     CardTitle,
     CardDescription
 } from '@/components/ui/card';
-
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 
 export default function Profile() {
     const { user, updateUser } = useAuth();
+
     // Profile state
     const [name, setName] = useState(user.name);
     const [email, setEmail] = useState(user.email);
@@ -31,10 +30,8 @@ export default function Profile() {
     // UI state
     const [profileLoading, setProfileLoading] = useState(false);
     const [passwordLoading, setPasswordLoading] = useState(false);
-
     const [profileError, setProfileError] = useState(null);
     const [passwordError, setPasswordError] = useState(null);
-
     const [profileSuccess, setProfileSuccess] = useState(null);
     const [passwordSuccess, setPasswordSuccess] = useState(null);
 
@@ -45,19 +42,18 @@ export default function Profile() {
         setProfileLoading(true);
 
         try {
-            console.log("Updating profile:", { name, email });
             const data = await updateProfile(name, email);
             if (data.token) {
                 updateUser({ name: data.name, email: data.email }, data.token);
             } else {
                 updateUser({ name: data.name, email: data.email });
             }
-            setProfileSuccess("Profile updated successfully!");
+            setProfileSuccess('Profile updated successfully!');
         } catch (err) {
             setProfileError(
                 err.response?.data?.message ||
                 err.response?.data ||
-                "Failed to update profile"
+                'Failed to update profile'
             );
         } finally {
             setProfileLoading(false);
@@ -70,7 +66,7 @@ export default function Profile() {
         setPasswordSuccess(null);
 
         if (!currentPassword) {
-            setPasswordError("Current password is required");
+            setPasswordError('Current password is required');
             return;
         }
 
@@ -83,40 +79,44 @@ export default function Profile() {
         setPasswordLoading(true);
 
         try {
-            const data = await updatePassword(currentPassword, newPassword, confirmPassword);
-            setPasswordSuccess("Password changed successfully!");
+            await updatePassword(currentPassword, newPassword, confirmPassword);
+            setPasswordSuccess('Password changed successfully!');
             setCurrentPassword('');
             setNewPassword('');
             setConfirmPassword('');
         } catch (err) {
-            const message =
+            setPasswordError(
                 err.response?.data?.message ||
                 err.response?.data ||
-                "Failed to change password";
-
-            setPasswordError(message);
-            setPasswordSuccess(null);
+                'Failed to change password'
+            );
         } finally {
             setPasswordLoading(false);
         }
     };
 
     return (
-        <div className="bg-gray-100 py-20 px-4 flex justify-center">
-            <Card className="w-full max-w-lg shadow-md">
-
+        <div className="max-w-lg mx-auto">
+            <Card className="shadow-md">
                 <CardHeader>
-                    <CardTitle>Edit Profile</CardTitle>
-                    <CardDescription>
-                        Update your personal details and password
-                    </CardDescription>
+                    <div className="flex items-center gap-4 mb-2">
+                        <div className="w-14 h-14 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-xl font-bold">
+                            {user.name?.charAt(0).toUpperCase()}
+                        </div>
+                        <div>
+                            <CardTitle>Edit Profile</CardTitle>
+                            <CardDescription>
+                                Update your personal details and password
+                            </CardDescription>
+                        </div>
+                    </div>
                 </CardHeader>
 
                 <CardContent className="space-y-8">
 
+                    {/* Profile section */}
                     <div className="space-y-4">
                         <h3 className="text-lg font-semibold">Profile Information</h3>
-
                         <form onSubmit={handleProfileUpdate} className="space-y-4">
                             <FormField label="Name" htmlFor="name">
                                 <Input
@@ -139,6 +139,18 @@ export default function Profile() {
                                 />
                             </FormField>
 
+                            <FormField label="Preferred Currency" htmlFor="currency">
+                                <Input
+                                    id="currency"
+                                    value={user.preferredCurrency}
+                                    disabled
+                                    className="bg-gray-50 text-gray-500"
+                                />
+                                <p className="text-xs text-gray-400 mt-1">
+                                    Currency cannot be changed after registration
+                                </p>
+                            </FormField>
+
                             {profileError && (
                                 <p className="text-sm text-red-500">{profileError}</p>
                             )}
@@ -152,12 +164,12 @@ export default function Profile() {
                         </form>
                     </div>
 
-                    <div className="border-t my-6" />
+                    <Separator />
 
+                    {/* Password section */}
                     <div className="space-y-4">
                         <h3 className="text-lg font-semibold">Change Password</h3>
-
-                        <form  noValidate onSubmit={handlePasswordChange} className="space-y-4">
+                        <form noValidate onSubmit={handlePasswordChange} className="space-y-4">
                             <FormField label="Current Password" htmlFor="currentPassword">
                                 <PasswordInput
                                     id="currentPassword"

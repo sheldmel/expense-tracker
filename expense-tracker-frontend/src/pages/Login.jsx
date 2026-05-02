@@ -24,7 +24,7 @@ export default function Login() {
 
         try {
             const data = await loginUser(email, password);
-            login({ name: data.name, email: data.email }, data.token);
+            login({ name: data.name, email: data.email, preferredCurrency: data.preferredCurrency }, data.token);
             navigate('/dashboard');
         } catch (err) {
             setError(err.response?.data?.message || 'Invalid email or password');
