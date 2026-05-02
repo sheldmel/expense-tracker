@@ -67,6 +67,7 @@ public class AuthService {
                 .token(token)
                 .name(user.getName())
                 .email(user.getEmail())
+                .preferredCurrency(user.getPreferredCurrency())
                 .build();
     }
 }

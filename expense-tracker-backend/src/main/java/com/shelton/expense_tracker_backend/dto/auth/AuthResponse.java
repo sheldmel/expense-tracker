@@ -1,5 +1,6 @@
 package com.shelton.expense_tracker_backend.dto.auth;
 
+import com.shelton.expense_tracker_backend.entity.Currency;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -14,4 +15,5 @@ public class AuthResponse {
     private String token;
     private String name;
     private String email;
+    private Currency preferredCurrency;
 }
