@@ -3,13 +3,11 @@ import { Button } from '@/components/ui/button';
 import { Plus } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { getBudgets, createBudget, updateBudget, deleteBudget } from '../services/budget';
+import { MONTH_NAMES } from '../utils/constants';
 import BudgetItem from './BudgetItem';
 import BudgetModal from './BudgetModal';
 
-const monthNames = [
-    "January", "February", "March", "April", "May", "June",
-    "July", "August", "September", "October", "November", "December"
-];
+const monthNames = MONTH_NAMES;
 
 const currentYear = new Date().getFullYear();
 const years = [currentYear - 2, currentYear - 1, currentYear, currentYear + 1, currentYear + 2];

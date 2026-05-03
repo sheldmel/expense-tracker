@@ -33,7 +33,7 @@ export default function BudgetModal({ open, budget, categories, onClose, onSave 
         <FormModal
             open={open}
             onClose={onClose}
-            title={'Set Budget'}
+            title={budget?.categoryName ? `Set Budget - ${budget.categoryName}` : 'Set Budget'}
         >
             <form onSubmit={handleSubmit} className="space-y-4 mt-2">
 

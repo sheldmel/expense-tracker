@@ -14,3 +14,19 @@ export const CATEGORY_COLORS = [
     '#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4',
     '#FFEAA7', '#DDA0DD', '#98D8C8', '#F7DC6F'
 ];
+
+export const MONTH_NAMES = [
+    "January", "February", "March", "April", "May", "June",
+    "July", "August", "September", "October", "November", "December"
+];
+
+
+export const DEFAULT_FILTERS = {
+    categoryId: null,
+    startDate: null,
+    endDate: null,
+    sortBy: 'date',
+    sortDir: 'desc',
+    page: 0,
+    size: 10
+};
