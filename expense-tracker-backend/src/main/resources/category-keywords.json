@@ -1,0 +1,35 @@
+{
+  "Food": [
+    "mcdonald's", "mcdonalds", "kfc", "subway", "pizza", "burger",
+    "restaurant", "cafe", "coffee", "groceries", "supermarket",
+    "lunch", "dinner", "breakfast", "swiggy", "zomato", "uber eats",
+    "dominos", "starbucks", "dunkin", "chipotle", "sushi", "bakery",
+    "snacks", "takeout", "diner", "buffet"
+  ],
+  "Transport": [
+    "uber", "ola", "lyft", "taxi", "cab", "bus", "metro", "train",
+    "subway", "flight", "airline", "fuel", "petrol", "gas", "parking",
+    "toll", "rapido", "auto rickshaw", "ferry"
+  ],
+  "Bills": [
+    "netflix", "spotify", "amazon prime", "disney", "hulu", "apple tv",
+    "electricity", "water bill", "internet", "wifi", "phone bill",
+    "rent", "mortgage", "insurance", "subscription", "broadband",
+    "gas bill", "maintenance"
+  ],
+  "Health": [
+    "pharmacy", "chemist", "doctor", "hospital", "clinic", "medicine",
+    "gym", "fitness", "yoga", "dentist", "optician", "therapy",
+    "vitamins", "supplements", "health checkup", "apollo", "medplus"
+  ],
+  "Shopping": [
+    "amazon", "flipkart", "myntra", "ajio", "clothes", "shoes",
+    "mall", "shopping", "dress", "shirt", "pants", "accessories",
+    "electronics", "gadgets", "furniture", "home decor", "ikea"
+  ],
+  "Entertainment": [
+    "movie", "cinema", "pvr", "inox", "concert", "show", "theatre",
+    "games", "steam", "playstation", "xbox", "bowling", "amusement",
+    "event", "festival", "park", "museum"
+  ]
+}

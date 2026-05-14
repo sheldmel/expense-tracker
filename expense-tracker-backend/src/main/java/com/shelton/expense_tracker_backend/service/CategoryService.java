@@ -48,6 +48,10 @@ public class CategoryService {
     public CategoryResponse createCategory(CategoryRequest request) {
 
         Long userId = getCurrentUserId();
+        long customCount = categoryRepository.countByUserId(userId);
+        if (customCount >= 3){
+            throw new RuntimeException("Maximum of 3 custom categories allowed");
+        }
 
         Category category = Category.builder()
                 .name(request.getName())

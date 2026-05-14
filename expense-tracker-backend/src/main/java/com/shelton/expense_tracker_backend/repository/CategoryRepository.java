@@ -15,4 +15,6 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
         WHERE c.user.id = :userId OR c.user IS NULL
     """)
     List<Category> findAllForUser(Long userId);
+
+    long countByUserId(Long userId);
 }
