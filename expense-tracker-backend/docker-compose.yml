@@ -1,14 +1,22 @@
-version: "3.8"
-
 services:
   backend:
+    build: .
     container_name: expense-backend
-    build:
-      context: .
-      dockerfile: Dockerfile
-
-    ports:
-      - "8080:8080"
-    restart: always
     env_file:
       - .env
+    depends_on:
+      - ollama
+    ports:
+      - "8080:8080"
+
+  ollama:
+    image: ollama/ollama
+    container_name: ollama
+    ports:
+      - "11434:11434"
+    restart: unless-stopped
+    volumes:
+      - ollama_data:/root/.ollama
+
+volumes:
+  ollama_data:
