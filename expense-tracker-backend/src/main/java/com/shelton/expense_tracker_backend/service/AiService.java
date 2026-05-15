@@ -96,12 +96,15 @@ public class AiService {
                 .collect(Collectors.joining(", "));
 
         String prompt = String.format("""
-                Given this expense description: '%s'
-                Available categories: %s
+                You are an expense classifier.
                 
-                Return ONLY the single most appropriate category name from the list.
-                No explanation, punctuation or extra text — just the category name.
-                """, description, categoryNames);
+                Choose exactly ONE category from this list:
+                %s
+                
+                Expense: %s
+                
+                Answer with ONLY the category name.
+                """, categoryNames, description);
 
         try {
             String response = chatClient.prompt()
@@ -110,8 +113,15 @@ public class AiService {
                     .content()
                     .trim();
 
-            System.out.println("AI RESPONSE: " + response);
-            return response;
+            System.out.println("RAW AI RESPONSE: " + response);
+
+            for (Category category : categories) {
+                if (response.toLowerCase().contains(category.getName().toLowerCase())) {
+                    return category.getName();
+                }
+            }
+
+            return "Other";
 
         } catch (Exception e) {
             System.err.println("AI model error: " + e.getMessage());
