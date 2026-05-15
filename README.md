@@ -3,24 +3,24 @@
 A full-stack expense tracking application built with React, Spring Boot, and PostgreSQL, deployed on AWS.
 
 ## Features
-- JWT authentication (register, login, token refresh)
+- JWT authentication 
 - Expense management (add, edit, delete, filter by date/category)
 - Custom categories with colour coding
-- AI-powered category suggestions via Anthropic API
+- AI-powered category suggestions via Spring AI and Ollama
 - Dashboard with spending charts and summaries
-- Budget limits with email alerts via AWS SES
+- Budget limits
 - Multi-currency support (USD, INR, GBP)
 
 ## Tech Stack
 **Frontend:** React, Recharts, Axios, React Router
 
-**Backend:** Spring Boot 3, Spring Security 6, Spring Data JPA
+**Backend:** Spring Boot 3, Spring Security 6, Spring Data JPA, Spring AI
 
-**Database:** PostgreSQL (Neon for dev, AWS RDS for prod)
+**Database:** PostgreSQL (Neon)
 
-**Cloud:** AWS EC2, S3, CloudFront, RDS, SES
+**Cloud:** AWS EC2, Vercel
 
-**Auth:** JWT (HttpOnly cookies)
+**Auth:** JWT 
 
 ## Architecture
 ![Architecture Diagram](docs/architecture.png)
