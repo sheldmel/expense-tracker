@@ -104,11 +104,15 @@ public class AiService {
                 """, description, categoryNames);
 
         try {
-            return chatClient.prompt()
+            String response = chatClient.prompt()
                     .user(prompt)
                     .call()
                     .content()
                     .trim();
+
+            System.out.println("AI RESPONSE: " + response);
+            return response;
+
         } catch (Exception e) {
             System.err.println("AI model error: " + e.getMessage());
             e.printStackTrace();
