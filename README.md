@@ -22,8 +22,6 @@ A full-stack expense tracking application built with React, Spring Boot, and Pos
 
 **Auth:** JWT 
 
-## Architecture
-![Architecture Diagram](docs/architecture.png)
 
 ## Getting Started
 
@@ -48,7 +46,3 @@ cp .env.example .env
 # Fill in your API URL
 npm run dev
 ```
-
-## Environment Variables
-
-### Backend (application.properties)
